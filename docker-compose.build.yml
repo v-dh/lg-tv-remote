@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  lg-tv-remote:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: lg-tv-remote:latest
+    container_name: lg-tv-remote
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - HOST=0.0.0.0
+      - TV_IP=192.168.1.100 # Remplace par l'IP de ta TV
+      - TV_PORT=3000
+      - TV_TIMEOUT=5000
+      - TV_RECONNECT=3000
+      - MESSAGE_DURATION=3000
+      - SHUTDOWN_DELAY_1=0
+      - SHUTDOWN_DELAY_2=60000
+      - SHUTDOWN_DELAY_3=120000
+      - SHUTDOWN_DELAY_FINAL=125000
+    networks:
+      - lg-tv-network
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "com.docker.compose.project=lg-tv-remote"
+      - "description=LG TV Remote Control Application"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/api/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  lg-tv-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  lg-tv-remote:
+    build: .
+    container_name: lg-tv-remote
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - TV_IP=${TV_IP:-192.168.1.100}
+    networks:
+      - lg-tv-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.lg-tv-remote.rule=Host(`lg-tv-remote.local`)"
+      - "traefik.http.services.lg-tv-remote.loadbalancer.server.port=3001"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/api/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+networks:
+  lg-tv-network:
+    driver: bridge

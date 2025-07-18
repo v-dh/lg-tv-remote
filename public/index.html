@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LG TV Remote</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header minimaliste -->
+        <header class="header">
+            <h1>LG TV Remote</h1>
+            <div class="status-bar">
+                <div class="status-indicator">
+                    <span id="status-indicator" class="status-dot offline"></span>
+                    <span id="status-text">Hors ligne</span>
+                </div>
+                <button id="connect-btn" class="btn btn-sm btn-primary">Se connecter</button>
+            </div>
+        </header>
+
+        <!-- Grid de contrôles -->
+        <div class="controls-grid">
+            
+            <!-- Alimentation -->
+            <div class="control-card">
+                <h2>Alimentation</h2>
+                <div class="control-group">
+                    <button id="power-off" class="btn btn-danger">Éteindre</button>
+                </div>
+            </div>
+
+            <!-- Volume -->
+            <div class="control-card">
+                <h2>Volume</h2>
+                <div class="control-group">
+                    <button id="volume-down" class="btn">-</button>
+                    <input type="range" id="volume-slider" min="0" max="100" value="50" class="slider">
+                    <button id="volume-up" class="btn">+</button>
+                </div>
+                <div class="control-group">
+                    <button id="mute" class="btn">Mute</button>
+                    <button id="unmute" class="btn">Unmute</button>
+                </div>
+            </div>
+
+            <!-- Chaînes -->
+            <div class="control-card">
+                <h2>Chaînes</h2>
+                <div class="control-group">
+                    <button id="channel-down" class="btn">-</button>
+                    <div class="input-group">
+                        <input type="number" id="channel-input" placeholder="Numéro" min="1" max="999" class="input">
+                        <button id="channel-set" class="btn">OK</button>
+                    </div>
+                    <button id="channel-up" class="btn">+</button>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="control-card">
+                <h2>Navigation</h2>
+                <div class="remote-control">
+                    <div class="remote-row">
+                        <button id="nav-up" class="nav-btn">↑</button>
+                    </div>
+                    <div class="remote-row">
+                        <button id="nav-left" class="nav-btn">←</button>
+                        <button id="nav-ok" class="nav-btn ok-btn">OK</button>
+                        <button id="nav-right" class="nav-btn">→</button>
+                    </div>
+                    <div class="remote-row">
+                        <button id="nav-down" class="nav-btn">↓</button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <button id="nav-back" class="btn">Retour</button>
+                    <button id="nav-home" class="btn">Accueil</button>
+                </div>
+            </div>
+
+            <!-- Applications -->
+            <div class="control-card">
+                <h2>Applications</h2>
+                <div class="apps-grid">
+                    <button class="app-btn" data-app="netflix">Netflix</button>
+                    <button class="app-btn" data-app="youtube">YouTube</button>
+                    <button class="app-btn" data-app="prime">Prime Video</button>
+                    <button class="app-btn" data-app="disney">Disney+</button>
+                    <button class="app-btn" data-app="spotify">Spotify</button>
+                    <button class="app-btn" data-app="browser">Navigateur</button>
+                </div>
+            </div>
+
+            <!-- Entrées -->
+            <div class="control-card">
+                <h2>Entrées</h2>
+                <div class="control-group">
+                    <select id="input-select" class="select">
+                        <option value="">Choisir une entrée</option>
+                        <option value="HDMI_1">HDMI 1</option>
+                        <option value="HDMI_2">HDMI 2</option>
+                        <option value="HDMI_3">HDMI 3</option>
+                        <option value="HDMI_4">HDMI 4</option>
+                        <option value="USB">USB</option>
+                    </select>
+                    <button id="input-set" class="btn">Changer</button>
+                </div>
+            </div>
+
+            <!-- Messages -->
+            <div class="control-card">
+                <h2>Messages</h2>
+                <div class="control-group">
+                    <input type="text" id="message-input" placeholder="Tapez votre message..." class="input">
+                    <input type="number" id="message-duration" placeholder="Durée (ms)" value="3000" min="1000" max="10000" class="input" style="width: 100px;">
+                    <button id="send-message" class="btn btn-primary">Envoyer</button>
+                </div>
+                <div class="control-group">
+                    <input type="text" id="message-mute-input" placeholder="Message avec mute..." class="input">
+                    <select id="mute-action-select" class="select">
+                        <option value="mute">Mute</option>
+                        <option value="unmute">Unmute</option>
+                    </select>
+                    <button id="send-message-mute" class="btn btn-success">Message + Mute</button>
+                </div>
+            </div>
+
+            <!-- Actions Combinées -->
+            <div class="control-card">
+                <h2>Actions Combinées</h2>
+                <div class="control-group">
+                    <button id="urgent-message" class="btn btn-warning">Message Urgent</button>
+                    <button id="netflix-mute" class="btn btn-success">Netflix + Mute</button>
+                </div>
+                <div class="control-group">
+                    <button id="dinner-ready" class="btn btn-success">Dîner Prêt</button>
+                    <button id="custom-combo" class="btn">Combo Personnalisé</button>
+                </div>
+            </div>
+
+            <!-- Séquence d'arrêt automatique -->
+            <div class="control-card">
+                <h2>🌙 Arrêt Automatique</h2>
+                <div class="control-group">
+                    <button id="shutdown-sequence" class="btn btn-shutdown">Séquence d'Arrêt (3 min)</button>
+                    <button id="shutdown-sequence-fast" class="btn btn-shutdown-test">Test Rapide (30s)</button>
+                </div>
+                <div class="control-group">
+                    <button id="cancel-shutdown" class="btn btn-danger">Annuler Séquence</button>
+                </div>
+                <div class="shutdown-info">
+                    <p><strong>Séquence normale :</strong></p>
+                    <ul>
+                        <li>0s : "Le téléviseur s'arrêtera dans 2 minutes"</li>
+                        <li>60s : "Le téléviseur s'arrêtera dans 1 minute"</li>
+                        <li>120s : "Bonne nuit 😴"</li>
+                        <li>125s : Arrêt de la TV</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- API Information -->
+        <div class="api-info">
+            <h3>API Endpoints</h3>
+            <div class="api-examples">
+                <code>POST /api/volume {"action": "up"}</code>
+                <code>POST /api/message {"message": "Hello TV!"}</code>
+                <code>POST /api/message-mute {"message": "Dîner!", "muteAction": "mute"}</code>
+                <code>POST /api/combo {"actions": [{"type": "volume", "data": {"action": "mute"}}, {"type": "message", "data": {"message": "Hello!"}}]}</code>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

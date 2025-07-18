@@ -20,13 +20,16 @@ Application web complète pour contrôler votre TV LG avec interface moderne et 
 
 ## 🚀 Installation
 
-### 1. Cloner et installer les dépendances
+### Méthode 1 : Installation locale
+
+#### 1. Cloner et installer les dépendances
 ```bash
+git clone https://github.com/v-dh/lg-tv-remote.git
 cd lg-tv-remote
 npm install
 ```
 
-### 2. Configuration de l'IP TV
+#### 2. Configuration de l'IP TV
 ```bash
 # Méthode 1 : Variable d'environnement
 export TV_IP=192.168.1.100
@@ -36,17 +39,89 @@ npm start
 TV_IP=192.168.1.100 npm start
 ```
 
-### 3. Démarrage
+#### 3. Démarrage
 ```bash
 npm start
 # ou pour le développement
 npm run dev
 ```
 
-### 4. Accès
+#### 4. Accès
 - **Interface Web** : http://localhost:3001
 - **API** : http://localhost:3001/api/
 - **Accès réseau** : http://[votre-ip]:3001
+
+### Méthode 2 : Docker (Recommandée)
+
+#### 🐳 Déploiement Docker Multi-Architecture
+
+Cette application est disponible sous forme d'image Docker multi-architecture, compatible avec :
+- **x86_64** (Intel/AMD) - Serveurs classiques, TrueNAS, Synology
+- **ARM64** (Apple Silicon) - Mac M1/M2, Raspberry Pi 4
+- **ARM32** - Raspberry Pi plus anciens
+
+#### Installation Docker simple
+
+```bash
+# Avec docker run
+docker run -d \
+  --name lg-tv-remote \
+  -p 3001:3001 \
+  -e TV_IP=192.168.1.100 \
+  -e PORT=3001 \
+  -e HOST=0.0.0.0 \
+  --restart unless-stopped \
+  v-dh/lg-tv-remote:latest
+
+# Avec docker-compose
+curl -O https://raw.githubusercontent.com/v-dh/lg-tv-remote/main/docker-compose.yml
+# Modifier TV_IP dans le fichier
+docker-compose up -d
+```
+
+#### Portainer / TrueNAS / Synology
+
+1. **Créer une stack** dans Portainer
+2. **Copier le docker-compose** :
+   ```yaml
+   version: '3.8'
+   services:
+     lg-tv-remote:
+       image: v-dh/lg-tv-remote:latest
+       container_name: lg-tv-remote
+       restart: unless-stopped
+       ports:
+         - "3001:3001"
+       environment:
+         - TV_IP=192.168.1.100  # ⚠️ Modifier avec l'IP de votre TV
+         - PORT=3001
+         - HOST=0.0.0.0
+         - NODE_ENV=production
+       networks:
+         - lg-tv-network
+   
+   networks:
+     lg-tv-network:
+       driver: bridge
+   ```
+3. **Modifier `TV_IP`** avec l'IP de votre TV
+4. **Déployer la stack**
+
+#### Variables d'environnement Docker
+
+| Variable | Défaut | Description |
+|----------|--------|-------------|
+| `TV_IP` | `192.168.1.100` | IP de votre TV LG |
+| `TV_PORT` | `3000` | Port WebSocket TV |
+| `PORT` | `3001` | Port du serveur web |
+| `HOST` | `0.0.0.0` | Adresse d'écoute |
+| `MESSAGE_DURATION` | `3000` | Durée des messages (ms) |
+| `SHUTDOWN_DELAY_FINAL` | `125000` | Délai d'arrêt automatique (ms) |
+
+#### Accès après déploiement Docker
+- **Interface Web** : http://[IP-SERVEUR]:3001
+- **API** : http://[IP-SERVEUR]:3001/api/
+- **Logs** : `docker logs lg-tv-remote`
 
 ## 🔧 Configuration TV
 
@@ -172,12 +247,18 @@ curl -X POST "http://192.168.1.200:3001/api/message" \
 ### Structure du projet
 ```
 lg-tv-remote/
-├── server.js          # Serveur Express + logique TV
-├── package.json       # Dépendances
+├── server.js                      # Serveur Express + logique TV
+├── package.json                   # Dépendances Node.js
+├── Dockerfile                     # Image Docker multi-architecture
+├── docker-compose.yml             # Déploiement Docker local
+├── docker-compose.portainer.yml   # Déploiement Portainer/TrueNAS
+├── .env.example                   # Variables d'environnement exemple
 ├── public/
-│   ├── index.html     # Interface web
-│   ├── styles.css     # Styles modernes
-│   └── script.js      # Logic frontend
+│   ├── index.html                 # Interface web responsive
+│   ├── styles.css                 # Styles modernes
+│   └── script.js                  # Logic frontend
+├── CONFIG.md                      # Configuration détaillée
+├── DEPLOYMENT.md                  # Guide de déploiement
 └── README.md
 ```
 
@@ -191,6 +272,41 @@ npm start
 
 # Avec IP TV personnalisée
 TV_IP=192.168.1.100 npm start
+
+# Build Docker multi-architecture
+docker buildx build --platform linux/amd64,linux/arm64 -t v-dh/lg-tv-remote:latest --push .
+
+# Test Docker local
+docker run -d --name lg-tv-remote -p 3001:3001 -e TV_IP=192.168.1.100 v-dh/lg-tv-remote:latest
+```
+
+### 🏗️ Build Multi-Architecture
+
+Pour contribuer ou créer votre propre image Docker :
+
+```bash
+# Créer un builder multi-architecture
+docker buildx create --name multiarch --use
+docker buildx inspect --bootstrap
+
+# Build et push pour toutes les architectures
+docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 \
+  -t votre-username/lg-tv-remote:latest \
+  --push \
+  .
+```
+
+### 🧪 Tests
+
+```bash
+# Test API endpoints
+curl -X GET "http://localhost:3001/api/status"
+curl -X POST "http://localhost:3001/api/message" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Test!", "duration": 3000}'
+
+# Test Docker
+docker run --rm -p 3001:3001 -e TV_IP=192.168.1.100 v-dh/lg-tv-remote:latest
 ```
 
 ## 🔍 Dépannage
@@ -205,12 +321,45 @@ TV_IP=192.168.1.100 npm start
 - **"TV non connectée"** : Vérifiez l'IP et le réseau
 - **"Connexion refusée"** : Activez LG Connect Apps
 - **"Timeout"** : Vérifiez la stabilité réseau
+- **"exec format error"** : Problème d'architecture → Utilisez l'image multi-architecture
 
 ### Logs
 ```bash
-# Voir les logs en temps réel
+# Installation locale
 npm start
 # Les logs s'affichent dans le terminal
+
+# Docker
+docker logs lg-tv-remote
+docker logs -f lg-tv-remote  # Temps réel
+
+# Portainer
+# Aller dans Containers → lg-tv-remote → Logs
+```
+
+### Problèmes Docker spécifiques
+
+#### Architecture incompatible
+```bash
+# Vérifier l'architecture du serveur
+uname -m
+
+# Forcer l'architecture (si nécessaire)
+docker run --platform linux/amd64 -d --name lg-tv-remote \
+  -p 3001:3001 -e TV_IP=192.168.1.100 \
+  v-dh/lg-tv-remote:latest
+```
+
+#### Container ne démarre pas
+```bash
+# Vérifier les logs
+docker logs lg-tv-remote
+
+# Vérifier la configuration
+docker inspect lg-tv-remote
+
+# Redémarrer
+docker restart lg-tv-remote
 ```
 
 ## 📝 Licence

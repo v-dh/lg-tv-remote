@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   lg-tv-remote:
-    build: .
+    image: v-dh/lg-tv-remote:latest
     container_name: lg-tv-remote
     restart: unless-stopped
     ports:

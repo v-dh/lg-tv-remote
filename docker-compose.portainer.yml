@@ -3,10 +3,15 @@ version: '3.8'
 services:
   lg-tv-remote:
     image: v-dh/lg-tv-remote:latest
+    platform: linux/amd64
     container_name: lg-tv-remote
     restart: unless-stopped
     ports:
       - "3001:3001"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    privileged: false
     environment:
       - NODE_ENV=production
       - PORT=3001
